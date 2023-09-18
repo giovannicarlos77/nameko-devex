@@ -35,6 +35,19 @@ class GatewayService(object):
         )
 
     @http(
+        "DELETE", "/products/<string:product_id>",
+        expected_exceptions=ProductNotFound
+    )
+    def remove_product(self, request, product_id):
+        """Remove product by `product_id`
+        """
+        product = self.products_rpc.delete(product_id)
+        return Response(
+            ProductSchema().dumps(product).data,
+            mimetype='application/json'
+        )
+
+    @http(
         "POST", "/products",
         expected_exceptions=(ValidationError, BadRequest)
     )
@@ -73,6 +86,16 @@ class GatewayService(object):
         return Response(
             json.dumps({'id': product_data['id']}), mimetype='application/json'
         )
+    
+    @http("GET", "/orders/all")
+    def list_orders(self, request):
+        """List all orders in the database."""
+        orders = self._get_orders()
+        return Response(
+            json.dumps(orders),
+            mimetype='application/json'
+        )
+
 
     @http("GET", "/orders/<int:order_id>", expected_exceptions=OrderNotFound)
     def get_order(self, request, order_id):
@@ -108,6 +131,29 @@ class GatewayService(object):
             item['image'] = '{}/{}.jpg'.format(image_root, product_id)
 
         return order
+    
+    def _get_orders(self):
+        # Retrieve order data from the orders service.
+        # Note - this may raise a remote exception that has been mapped to
+        # raise``OrderNotFound``
+        orders = self.orders_rpc.list_orders()
+
+        # Retrieve all products from the products service
+        product_map = {prod['id']: prod for prod in self.products_rpc.list()}
+
+        # get the configured image root
+        image_root = config['PRODUCT_IMAGE_ROOT']
+
+        # Enhance order details with product and image details.
+        for order in orders:
+            for item in order['order_details']:
+                product_id = item['product_id']
+
+                item['product'] = product_map[product_id]
+                # Construct an image url.
+                item['image'] = '{}/{}.jpg'.format(image_root, product_id)
+
+        return orders
 
     @http(
         "POST", "/orders",

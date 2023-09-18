@@ -13,7 +13,7 @@ def test_config(rabbit_config):
         yield
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def redis_client(test_config):
     client = redis.StrictRedis.from_url(config.get(REDIS_URI_KEY))
     yield client

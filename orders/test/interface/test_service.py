@@ -94,3 +94,15 @@ def test_can_update_order(orders_rpc, order):
 def test_can_delete_order(orders_rpc, order, db_session):
     orders_rpc.delete_order(order.id)
     assert not db_session.query(Order).filter_by(id=order.id).count()
+
+def test_list_all_orders(orders_rpc, db_session, order_details):
+    orders_list = orders_rpc.list_orders()
+
+    assert isinstance(orders_list, list)
+
+    assert len(orders_list) > 0
+
+    for order in orders_list:
+        assert isinstance(order, dict)
+        assert 'id' in order
+

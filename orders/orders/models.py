@@ -1,7 +1,7 @@
 import datetime
 
 from sqlalchemy import (
-    DECIMAL, Column, DateTime, ForeignKey, Integer,
+    DECIMAL, Column, DateTime, ForeignKey, Integer, TEXT
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -40,6 +40,6 @@ class OrderDetail(DeclarativeBase):
         nullable=False
     )
     order = relationship(Order, backref="order_details")
-    product_id = Column(Integer, nullable=False)
+    product_id = Column(TEXT, nullable=False)
     price = Column(DECIMAL(18, 2), nullable=False)
     quantity = Column(Integer, nullable=False)

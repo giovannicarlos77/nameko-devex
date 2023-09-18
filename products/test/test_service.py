@@ -25,6 +25,16 @@ def test_get_product(create_product, service_container):
     assert stored_product == loaded_product
 
 
+def test_delete_product(create_product, service_container):
+    stored_product = create_product()
+    print(stored_product)
+
+    with entrypoint_hook(service_container, 'delete') as delete:
+        result = delete(stored_product['id'])
+
+    assert result is True
+
+
 def test_get_product_fails_on_not_found(service_container):
 
     with pytest.raises(NotFound):
