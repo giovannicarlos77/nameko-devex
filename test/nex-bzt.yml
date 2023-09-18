@@ -63,7 +63,6 @@ scenarios:
       extract-jsonpath:
         product_key: $.id
         default: NOT_FOUND
-
     # 3. Create Orders
     - url: /orders
       label: orders-create
@@ -90,7 +89,7 @@ scenarios:
       then:
         - action: continue
   
-    # 4. Get Orders
+    # 4. Get Order
     - url: /orders/${order_id}
       label: order-get
       think-time: uniform(0s, 0s)
@@ -108,7 +107,24 @@ scenarios:
     - if: '"${order_id}" == "NOT_FOUND"'
       then:
         - action: continue
-  
+    # # 5. Get All orders
+    # - url: /orders/all
+    #   label: orders-get
+    #   think-time: uniform(0s, 0s)
+    #   method: GET
+            
+    #   assert:
+    #   - contains:
+    #     - 200
+    #     subject: http-code
+    #     not: false
+    #   extract-jsonpath:
+    #     orders: $  # Extract the entire list of orders
+
+    # # Check if orders is "NOT_FOUND" and continue if true
+    # - if: '"${orders}" == "NOT_FOUND"'
+    #   then:
+    #     - action: continue
 reporting:
 - module: final-stats
   dump-xml: stats.xml

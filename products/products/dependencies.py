@@ -43,10 +43,20 @@ class StorageWrapper:
         else:
             return self._from_hash(product)
 
-    def list(self):
-        keys = self.client.keys(self._format_key('*'))
+    def list(self, product_ids=[]):
+        result_list = []
+
+        if product_ids == []:
+            keys = self.client.scan_iter(count=1000)
+        else:
+            keys = {self._format_key(product_id) for product_id in product_ids}
+
         for key in keys:
-            yield self._from_hash(self.client.hgetall(key))
+            document = self.client.hgetall(key)
+            if document:
+                result_list.append(self._from_hash(document))
+
+        return result_list
 
     def create(self, product):
         self.client.hmset(
