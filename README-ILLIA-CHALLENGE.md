@@ -1,3 +1,14 @@
+## Enhancements:
+All the enhancements (Unit Tests, Performance, Fix Logic flaws) was made in the commits below:
+
+[Commit 1](https://github.com/gitricko/nameko-devex/commit/2e8ffb287f6241c40c2a331b9b8a60643d078d35)
+
+[Commit 2](https://github.com/gitricko/nameko-devex/commit/970bdafcc889275633d13e7af2acdf73a2e5203a)
+
+[Commit 3](https://github.com/gitricko/nameko-devex/commit/2c10b2e31e96b680115de68243f9ab3b340b2008)
+
+[Commit 4](https://github.com/gitricko/nameko-devex/commit/6cba7134cef9819016a60774a8e177dc97ade649)
+
 ## Code Challenge: Understanding Performance Degradation
 
 ### Why is performance degrading as the test run longer?
