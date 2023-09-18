@@ -27,7 +27,6 @@ def test_get_product(create_product, service_container):
 
 def test_delete_product(create_product, service_container):
     stored_product = create_product()
-    print(stored_product)
 
     with entrypoint_hook(service_container, 'delete') as delete:
         result = delete(stored_product['id'])

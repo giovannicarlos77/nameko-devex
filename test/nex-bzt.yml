@@ -63,7 +63,53 @@ scenarios:
       extract-jsonpath:
         product_key: $.id
         default: NOT_FOUND
-    # 3. Create Orders
+
+    # 2.1 Create Product to delete
+    - url: /products
+      label: products-create-to-delete
+      think-time: uniform(0s, 0s)
+      method: POST
+      headers:
+        cache-control: no-cache
+        Content-Type: application/json
+      body: 'request-body-string'
+      body: >
+        {
+          "id": "${id}-${__javaScript(Math.random())}-DELETE",
+          "title": "${title}-DELETE",
+          "passenger_capacity": ${passenger_capacity},
+          "maximum_speed": ${maximum_speed},
+          "in_stock": ${in_stock}
+        }          
+      assert:
+      - contains:
+        - 200
+        subject: http-code
+        not: false
+      extract-jsonpath:
+        product_id_to_delete: $.id
+        default: NOT_FOUND
+
+    - if: '"${product_id_to_delete}" == "NOT_FOUND"'
+      then:
+        - action: continue
+
+    # 2.2. Delete Product
+    - url: /products/${product_id_to_delete}
+      label: product-delete
+      think-time: uniform(0s, 0s)
+      method: DELETE
+
+      assert:
+      - contains:
+        - 200
+        subject: http-code
+        not: false
+      extract-jsonpath:
+        product_id_deleted: $.id
+        default: NOT_FOUND
+
+    # 3. Create Order
     - url: /orders
       label: orders-create
       think-time: uniform(0s, 0s)
@@ -121,7 +167,6 @@ scenarios:
     #   extract-jsonpath:
     #     orders: $  # Extract the entire list of orders
 
-    # # Check if orders is "NOT_FOUND" and continue if true
     # - if: '"${orders}" == "NOT_FOUND"'
     #   then:
     #     - action: continue

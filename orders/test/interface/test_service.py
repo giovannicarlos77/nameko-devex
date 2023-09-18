@@ -30,7 +30,7 @@ def order_details(db_session, order):
 
 
 def test_get_order(orders_rpc, order):
-    response = orders_rpc.get_order(1)
+    response = orders_rpc.get_order(order.id)
     assert response['id'] == order.id
 
 
@@ -102,7 +102,20 @@ def test_list_all_orders(orders_rpc, db_session, order_details):
 
     assert len(orders_list) > 0
 
+def test_list_all_orders(orders_rpc, db_session, order_details):
+    orders_list = orders_rpc.list_orders()
+
+    assert isinstance(orders_list, list)
+    assert len(orders_list) > 0
+
     for order in orders_list:
         assert isinstance(order, dict)
         assert 'id' in order
+
+        for order_detail in order['order_details']:
+            assert isinstance(order_detail, dict)
+            assert 'id' in order_detail
+            assert 'quantity' in order_detail
+            assert 'price' in order_detail
+            assert 'product_id' in order_detail
 
